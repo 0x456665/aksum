@@ -1,0 +1,42 @@
+//! Application settings loaded from environment variables.
+
+/// Application settings.
+#[derive(Debug, Clone)]
+pub struct Settings {
+    /// Server host address
+    pub host: String,
+    /// Server port
+    pub port: u16,
+    {%- if with_db %}
+    /// Database connection URL
+    pub database_url: String,
+    {%- endif %}
+    {%- if with_redis %}
+    /// Redis connection URL
+    pub redis_url: String,
+    {%- endif %}
+}
+
+impl Settings {
+    /// Load settings from environment variables.
+    ///
+    /// # Panics
+    /// Panics if required environment variables are missing.
+    pub fn from_env() -> Self {
+        Self {
+            host: std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string()),
+            port: std::env::var("PORT")
+                .unwrap_or_else(|_| "3000".to_string())
+                .parse()
+                .expect("PORT must be a valid u16"),
+            {%- if with_db %}
+            database_url: std::env::var("DATABASE_URL")
+                .expect("DATABASE_URL must be set"),
+            {%- endif %}
+            {%- if with_redis %}
+            redis_url: std::env::var("REDIS_URL")
+                .expect("REDIS_URL must be set"),
+            {%- endif %}
+        }
+    }
+}

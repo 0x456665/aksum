@@ -1,0 +1,19 @@
+//! {{ ModuleName }} module.
+//!
+//! Provides {{ module_name }} functionality for the application.
+{%- if not no_controller %}
+
+pub mod controller;
+{%- endif %}
+{%- if not no_service %}
+pub mod service;
+{%- endif %}
+{%- if not no_repo %}
+pub mod repository;
+{%- endif %}
+{%- if not no_dto %}
+pub mod dto;
+{%- endif %}
+{%- if not no_schema %}
+pub mod schema;
+{%- endif %}

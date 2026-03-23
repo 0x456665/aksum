@@ -1,0 +1,66 @@
+//! Central application state.
+//!
+//! All module repository traits are implemented on `AppState` via each
+//! module's `repository/implementation.rs`. This struct holds shared
+//! resources (database pools, caches, etc.) that modules access
+//! through their trait implementations.
+
+{%- if with_db %}
+use sqlx::PgPool;
+{%- endif %}
+{%- if with_redis %}
+use redis::Client as RedisClient;
+{%- endif %}
+// aksum:state_imports
+
+/// Application state shared across all request handlers.
+///
+/// Each module defines a repository trait, and the implementation
+/// of that trait for `AppState` lives in the module's own
+/// `repository/implementation.rs` file. This enables modular
+/// dependency injection — a module only requires that `AppState`
+/// implements its specific trait.
+#[derive(Clone)]
+pub struct AppState {
+    {%- if with_db %}
+    /// PostgreSQL connection pool
+    pub db_pool: PgPool,
+    {%- endif %}
+    {%- if with_redis %}
+    /// Redis client
+    pub redis_client: RedisClient,
+    {%- endif %}
+    // aksum:state_fields
+}
+
+impl AppState {
+    /// Creates a new `AppState` with all required dependencies.
+    pub async fn new(
+        {%- if with_db %}settings: &crate::config::settings::Settings{% endif -%}
+    ) -> Self {
+        {%- if with_db %}
+        let db_pool = sqlx::PgPool::connect(&settings.database_url)
+            .await
+            .expect("Failed to connect to database");
+        {%- endif %}
+        {%- if with_redis %}
+        let redis_client = redis::Client::open(
+            {%- if with_db %}settings.redis_url.as_str(){% else %}
+            std::env::var("REDIS_URL")
+                .expect("REDIS_URL must be set")
+                .as_str()
+            {%- endif %}
+        ).expect("Failed to create Redis client");
+        {%- endif %}
+
+        Self {
+            {%- if with_db %}
+            db_pool,
+            {%- endif %}
+            {%- if with_redis %}
+            redis_client,
+            {%- endif %}
+            // aksum:state_init
+        }
+    }
+}

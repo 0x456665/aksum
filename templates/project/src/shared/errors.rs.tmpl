@@ -1,0 +1,68 @@
+//! Shared error types for the application.
+//!
+//! Provides a unified `AppError` type that all modules use for
+//! error handling. Implements `IntoResponse` for automatic HTTP
+//! error responses.
+
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
+use axum::Json;
+use serde_json::json;
+
+/// Application-wide error type.
+///
+/// Modules can use this directly or define module-specific errors
+/// that convert into `AppError`.
+#[derive(Debug, thiserror::Error)]
+pub enum AppError {
+    /// A resource was not found
+    #[error("Not found: {0}")]
+    NotFound(String),
+
+    /// Bad request from the client
+    #[error("Bad request: {0}")]
+    BadRequest(String),
+
+    /// Internal server error
+    #[error("Internal error: {0}")]
+    Internal(String),
+    {%- if with_db %}
+
+    /// Database error
+    #[error("Database error: {0}")]
+    Database(#[from] sqlx::Error),
+    {%- endif %}
+
+    /// Unexpected error
+    #[error(transparent)]
+    Unexpected(#[from] anyhow::Error),
+}
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        let (status, message) = match &self {
+            AppError::NotFound(msg) => (StatusCode::NOT_FOUND, msg.clone()),
+            AppError::BadRequest(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
+            AppError::Internal(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg.clone()),
+            {%- if with_db %}
+            AppError::Database(err) => {
+                tracing::error!("Database error: {:?}", err);
+                (StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string())
+            }
+            {%- endif %}
+            AppError::Unexpected(err) => {
+                tracing::error!("Unexpected error: {:?}", err);
+                (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error".to_string())
+            }
+        };
+
+        let body = json!({
+            "error": {
+                "message": message,
+                "status": status.as_u16(),
+            }
+        });
+
+        (status, Json(body)).into_response()
+    }
+}

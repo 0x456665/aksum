@@ -1,0 +1,12 @@
+[package]
+name = "aksum"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.6.0", features = ["derive"] }
+rust-embed = "8.11.0"
+minijinja = "2"
+convert_case = "0.7"
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }

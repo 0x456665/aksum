@@ -1,0 +1,9 @@
+HOST=0.0.0.0
+PORT=3000
+RUST_LOG=info
+{%- if with_db %}
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/{{ project_name }}
+{%- endif %}
+{%- if with_redis %}
+REDIS_URL=redis://localhost:6379
+{%- endif %}

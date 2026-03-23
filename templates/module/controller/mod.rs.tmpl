@@ -1,0 +1,32 @@
+//! {{ ModuleName }} controller.
+//!
+//! HTTP handlers for {{ module_name }} endpoints.
+//! All handlers are documented with utoipa for OpenAPI generation.
+
+use axum::{extract::State, Router, routing::get};
+use crate::app_state::AppState;
+
+/// Build the {{ module_name }} module routes.
+///
+/// Mount this into the main router via
+/// `.merge(modules::{{ module_name }}::controller::routes())`.
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/{{ module_name }}", get(index))
+}
+
+/// List {{ module_name }} resources.
+#[utoipa::path(
+    get,
+    path = "/{{ module_name }}",
+    tag = "{{ ModuleName }}",
+    responses(
+        (status = 200, description = "Success"),
+    )
+)]
+pub async fn index(
+    State(_state): State<AppState>,
+) -> &'static str {
+    "{{ ModuleName }} module"
+}
+// aksum:controller_handlers

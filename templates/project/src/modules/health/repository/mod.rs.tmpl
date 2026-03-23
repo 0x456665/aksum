@@ -1,0 +1,19 @@
+//! Health check repository trait.
+//!
+//! Defines the `HealthRepository` trait that must be implemented
+//! by `AppState` to provide health check capabilities.
+//! The implementation lives in `implementation.rs`.
+
+mod implementation;
+
+use crate::shared::errors::AppError;
+
+/// Repository trait for health check operations.
+///
+/// Implement this trait on `AppState` to enable the health module.
+/// This trait is the contract between the health module and the
+/// application — any AppState that implements it can use this module.
+pub trait HealthRepository: Clone + Send + Sync + 'static {
+    /// Check if the application and its dependencies are healthy.
+    fn check_health(&self) -> impl std::future::Future<Output = Result<bool, AppError>> + Send;
+}

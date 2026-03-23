@@ -1,0 +1,22 @@
+//! {{ ModuleName }} repository trait.
+//!
+//! Defines the `{{ ModuleName }}Repository` trait that must be implemented
+//! by `AppState` to provide {{ module_name }} capabilities.
+
+mod implementation;
+
+use crate::shared::errors::AppError;
+
+/// Repository trait for {{ module_name }} operations.
+///
+/// Implement this trait on `AppState` to enable the {{ module_name }} module.
+/// The implementation lives in `implementation.rs`.
+pub trait {{ ModuleName }}Repository: Clone + Send + Sync + 'static {
+    // TODO: Define repository methods. Example:
+    //
+    // fn find_by_id(&self, id: i64)
+    //     -> impl std::future::Future<Output = Result<Option<YourType>, AppError>> + Send;
+    //
+    // fn create(&self, dto: CreateDto)
+    //     -> impl std::future::Future<Output = Result<YourType, AppError>> + Send;
+}

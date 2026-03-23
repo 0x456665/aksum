@@ -1,0 +1,21 @@
+//! {{ ControllerName }} handler for the {{ module_name }} module.
+//!
+//! Additional controller handler added via `aksum generate controller`.
+
+use axum::extract::State;
+use crate::app_state::AppState;
+
+/// {{ ControllerName }} handler.
+#[utoipa::path(
+    get,
+    path = "/{{ module_name }}/{{ controller_name }}",
+    tag = "{{ ModuleName }}",
+    responses(
+        (status = 200, description = "Success"),
+    )
+)]
+pub async fn {{ controller_name }}(
+    State(_state): State<AppState>,
+) -> &'static str {
+    "{{ ControllerName }}"
+}

@@ -1,0 +1,22 @@
+//! Health repository implementation for AppState.
+//!
+//! This file contains the concrete implementation of `HealthRepository`
+//! for the application's `AppState`. Each module owns its own
+//! trait implementation, keeping the AppState struct lean.
+
+use super::HealthRepository;
+use crate::app_state::AppState;
+use crate::shared::errors::AppError;
+
+impl HealthRepository for AppState {
+    /// Checks application health.
+    ///
+    /// In a production application, you might verify:
+    /// - Database connectivity (ping the pool)
+    /// - Cache availability (ping Redis)
+    /// - External service health
+    async fn check_health(&self) -> Result<bool, AppError> {
+        // TODO: Add actual health checks for your dependencies
+        Ok(true)
+    }
+}

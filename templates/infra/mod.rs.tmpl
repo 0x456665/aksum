@@ -1,0 +1,12 @@
+//! Infrastructure layer.
+//!
+//! Contains database, cache, and other infrastructure concerns.
+//! Each infrastructure module provides traits for AppState
+//! to implement, enabling modular access.
+
+{%- if with_db %}
+pub mod db;
+{%- endif %}
+{%- if with_redis %}
+pub mod cache;
+{%- endif %}

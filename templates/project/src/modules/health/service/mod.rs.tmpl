@@ -1,0 +1,30 @@
+//! Health check service.
+//!
+//! Contains business logic for health check operations.
+//! Services receive a reference to any type implementing the
+//! required repository trait, keeping them decoupled from AppState.
+
+use super::repository::HealthRepository;
+use super::schema::HealthResponse;
+
+/// Perform a health check using the repository layer.
+///
+/// Accepts any type implementing `HealthRepository`, enabling
+/// easy testing with mock implementations.
+pub async fn check_health(repo: &impl HealthRepository) -> HealthResponse {
+    match repo.check_health().await {
+        Ok(true) => HealthResponse {
+            status: "healthy".to_string(),
+            message: "All systems operational".to_string(),
+        },
+        Ok(false) => HealthResponse {
+            status: "degraded".to_string(),
+            message: "Some systems are not responding".to_string(),
+        },
+        Err(_) => HealthResponse {
+            status: "unhealthy".to_string(),
+            message: "Health check failed".to_string(),
+        },
+    }
+}
+// aksum:service_functions

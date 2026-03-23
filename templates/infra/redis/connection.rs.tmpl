@@ -1,0 +1,14 @@
+//! Redis connection setup.
+//!
+//! Provides functions for creating the Redis client.
+
+use redis::Client;
+
+/// Create a new Redis client.
+///
+/// # Panics
+/// Panics if the Redis URL is invalid.
+pub fn create_client(redis_url: &str) -> Client {
+    Client::open(redis_url)
+        .expect("Failed to create Redis client")
+}

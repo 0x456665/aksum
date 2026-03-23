@@ -1,0 +1,17 @@
+//! Health check response schemas.
+//!
+//! Response types for the health module. These define the shape
+//! of data returned to clients and are documented with utoipa
+//! for OpenAPI schema generation.
+
+use serde::Serialize;
+use utoipa::ToSchema;
+
+/// Health check response.
+#[derive(Debug, Serialize, ToSchema)]
+pub struct HealthResponse {
+    /// Current health status: "healthy", "degraded", or "unhealthy"
+    pub status: String,
+    /// Human-readable health message
+    pub message: String,
+}

@@ -1,0 +1,9 @@
+//! Shared utilities and types used across modules.
+
+pub mod errors;
+{%- if with_db and infra_as_shared %}
+pub mod db;
+{%- endif %}
+{%- if with_redis and infra_as_shared %}
+pub mod cache;
+{%- endif %}

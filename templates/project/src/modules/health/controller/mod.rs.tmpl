@@ -1,0 +1,38 @@
+//! Health check controller.
+//!
+//! Defines HTTP handlers for health check endpoints.
+//! All handlers are documented with utoipa for OpenAPI generation.
+
+use axum::{extract::State, Json, Router, routing::get};
+use crate::app_state::AppState;
+use super::service;
+use super::schema::HealthResponse;
+
+/// Build the health module routes.
+///
+/// Mount this into the main router via `.merge(health::controller::routes())`.
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/health", get(health_check))
+}
+
+/// Check application health.
+///
+/// Returns the current health status of the application
+/// and its dependencies.
+#[utoipa::path(
+    get,
+    path = "/health",
+    tag = "Health",
+    responses(
+        (status = 200, description = "Application is healthy", body = HealthResponse),
+        (status = 500, description = "Application is unhealthy"),
+    )
+)]
+pub async fn health_check(
+    State(state): State<AppState>,
+) -> Json<HealthResponse> {
+    let response = service::check_health(&state).await;
+    Json(response)
+}
+// aksum:controller_handlers
